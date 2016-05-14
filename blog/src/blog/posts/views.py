@@ -1,16 +1,38 @@
 from django.shortcuts import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 
 # Create your views here.
 
+from models import Post
 def post_create(request):
-    return render(request, "index.html")
+    context = {
+        "title": "create"
+    }
+    return render(request, "index.html",context)
 
 def post_detail(request):
-    return HttpResponse("<h1>Detail</h1>")
+    # instance = Post.objects.get(id = 30)
+    instance = get_object_or_404(Post,id=2)
+    context = {
+        "title": "List",
+    "instance": instance
+    }
+    return render(request,"detail_view.html",context)
 
 def post_list(request):
-    return HttpResponse("<h1>List</h1>")
+    queryset = Post.objects.all()
+
+    if request.user.is_authenticated():
+        context = {
+            "object_list": queryset,
+            "title": "list new"
+        }
+    else:
+        context = {
+            "title": "list"
+        }
+    return render(request, "index.html",context)
+
 
 def post_update(request):
     return HttpResponse("<h1>Update</h1>")
